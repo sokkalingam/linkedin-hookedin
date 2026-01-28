@@ -10,20 +10,28 @@ export function validateLinkedInSignature(
   clientSecret: string
 ): boolean {
   try {
-    // LinkedIn sends the signature in the X-Li-Signature header
-    // The signature is HMAC-SHA256 of the request body using client secret as hex
+    // LinkedIn docs say signature format is: hmacsha256=<hex-hash>
+    // Strip the prefix if it exists
+    let signatureHash = signature;
+    if (signature.startsWith('hmacsha256=')) {
+      signatureHash = signature.substring(11); // Remove 'hmacsha256=' prefix
+    }
+
+    // Compute HMAC-SHA256 hash
     const hmac = crypto.createHmac('sha256', clientSecret);
     hmac.update(payload);
     const expectedSignature = hmac.digest('hex');
 
-    const isValid = signature === expectedSignature;
+    const isValid = signatureHash === expectedSignature;
 
     // Debug logging
     console.log('Signature Validation Debug:', {
-      received: signature,
+      receivedRaw: signature,
+      receivedHash: signatureHash,
       computed: expectedSignature,
+      hadPrefix: signature.startsWith('hmacsha256='),
       payloadLength: payload.length,
-      payloadFull: payload, // Log full payload to see exact format
+      payloadFull: payload,
       secretPrefix: clientSecret.substring(0, 10) + '***',
       secretLength: clientSecret.length,
       isValid,

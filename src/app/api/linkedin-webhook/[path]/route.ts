@@ -96,6 +96,9 @@ export async function POST(
       console.log('Validating signature:', {
         webhookPath: path,
         signaturePresent: !!signature,
+        signatureValue: signature,
+        signatureHasPrefix: signature.startsWith('hmacsha256='),
+        signatureLength: signature.length,
         bodyTextLength: bodyText.length,
         secretDecrypted: clientSecret.length > 0,
         secretLength: clientSecret.length,
