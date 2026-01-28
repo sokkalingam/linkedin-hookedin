@@ -20,7 +20,11 @@ export async function POST(
       body = {};
     }
 
-    console.log('LinkedIn webhook POST received:', { path, body });
+    console.log('LinkedIn webhook POST received:', {
+      path,
+      bodyPreview: bodyText.substring(0, 200),
+      bodyLength: bodyText.length,
+    });
 
     // Check if this is a challenge request - respond immediately without DB lookup
     if (body.challenge) {

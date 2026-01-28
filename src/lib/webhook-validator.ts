@@ -23,8 +23,9 @@ export function validateLinkedInSignature(
       received: signature,
       computed: expectedSignature,
       payloadLength: payload.length,
-      payloadPreview: payload.substring(0, 100),
-      secretPrefix: clientSecret.substring(0, 4) + '***',
+      payloadFull: payload, // Log full payload to see exact format
+      secretPrefix: clientSecret.substring(0, 10) + '***',
+      secretLength: clientSecret.length,
       isValid,
     });
 
