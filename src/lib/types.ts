@@ -14,6 +14,7 @@ export interface WebhookEvent {
   headers: Record<string, string>;
   payload: any;
   received_at: string;
+  validation_status?: 'valid' | 'invalid' | 'no_signature';
 }
 
 export interface CreateWebhookRequest {

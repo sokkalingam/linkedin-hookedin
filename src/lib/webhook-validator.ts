@@ -11,11 +11,11 @@ export function validateLinkedInSignature(
 ): boolean {
   try {
     // LinkedIn sends the signature in the X-Li-Signature header
-    // The signature is HMAC-SHA256 of the request body using client secret
+    // The signature is HMAC-SHA256 of the request body using client secret as hex
     const hmac = crypto.createHmac('sha256', clientSecret);
     hmac.update(payload);
-    const expectedSignature = hmac.digest('base64');
-    
+    const expectedSignature = hmac.digest('hex');
+
     return signature === expectedSignature;
   } catch (error) {
     console.error('Error validating signature:', error);

@@ -84,25 +84,29 @@ export async function POST(
 
     // Validate signature for actual events
     const signature = headers['x-li-signature'] || headers['X-Li-Signature'];
-    
+    let validationStatus: 'valid' | 'invalid' | 'no_signature' = 'no_signature';
+    let shouldReject = false;
+
     if (signature) {
       const clientSecret = decryptSecret(webhook.encrypted_secret);
       const isValid = validateLinkedInSignature(bodyText, signature, clientSecret);
 
-      if (!isValid) {
-        return NextResponse.json(
-          { error: 'Invalid signature' },
-          { status: 401 }
-        );
+      if (isValid) {
+        validationStatus = 'valid';
+      } else {
+        validationStatus = 'invalid';
+        shouldReject = true;
+        console.warn('Signature validation failed for webhook:', path);
       }
     }
 
-    // Store the event
+    // Store the event regardless of validation status
     const { error: insertError } = await supabase.from('events').insert({
       webhook_id: webhook.id,
       event_type: 'notification',
       headers: headers,
       payload: body,
+      validation_status: validationStatus,
     });
 
     if (insertError) {
@@ -131,6 +135,14 @@ export async function POST(
           .delete()
           .in('id', idsToDelete);
       }
+    }
+
+    // Reject request if validation failed (but event was already stored)
+    if (shouldReject) {
+      return NextResponse.json(
+        { error: 'Invalid signature', stored: true },
+        { status: 401 }
+      );
     }
 
     return NextResponse.json(

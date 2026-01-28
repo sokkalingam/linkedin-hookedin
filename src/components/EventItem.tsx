@@ -28,6 +28,32 @@ export default function EventItem({ event }: EventItemProps) {
       : 'bg-green-100 text-green-800 border-green-300';
   };
 
+  const getValidationStatusColor = (status?: string) => {
+    switch (status) {
+      case 'valid':
+        return 'bg-green-100 text-green-800 border-green-300';
+      case 'invalid':
+        return 'bg-red-100 text-red-800 border-red-300';
+      case 'no_signature':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-300';
+    }
+  };
+
+  const getValidationStatusLabel = (status?: string) => {
+    switch (status) {
+      case 'valid':
+        return '✓ Valid';
+      case 'invalid':
+        return '✗ Invalid Signature';
+      case 'no_signature':
+        return '⚠ No Signature';
+      default:
+        return 'Unknown';
+    }
+  };
+
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden">
       <div
@@ -47,6 +73,15 @@ export default function EventItem({ event }: EventItemProps) {
               >
                 {event.event_type.toUpperCase()}
               </span>
+              {event.validation_status && event.event_type === 'notification' && (
+                <span
+                  className={`px-2 py-1 rounded text-xs font-medium border ${getValidationStatusColor(
+                    event.validation_status
+                  )}`}
+                >
+                  {getValidationStatusLabel(event.validation_status)}
+                </span>
+              )}
               <span className="text-sm text-gray-500">
                 {formatDate(event.received_at)}
               </span>
@@ -99,11 +134,37 @@ export default function EventItem({ event }: EventItemProps) {
             )}
 
             {event.event_type === 'notification' && (
-              <div className="bg-green-50 p-3 rounded border border-green-200">
-                <p className="text-sm text-green-800">
-                  <strong>Event Notification:</strong> This is an actual event
-                  notification from LinkedIn. The signature was verified before
-                  storing.
+              <div
+                className={`p-3 rounded border ${
+                  event.validation_status === 'invalid'
+                    ? 'bg-red-50 border-red-200'
+                    : event.validation_status === 'no_signature'
+                    ? 'bg-yellow-50 border-yellow-200'
+                    : 'bg-green-50 border-green-200'
+                }`}
+              >
+                <p
+                  className={`text-sm ${
+                    event.validation_status === 'invalid'
+                      ? 'text-red-800'
+                      : event.validation_status === 'no_signature'
+                      ? 'text-yellow-800'
+                      : 'text-green-800'
+                  }`}
+                >
+                  <strong>Event Notification:</strong>{' '}
+                  {event.validation_status === 'invalid' && (
+                    'Signature validation FAILED. This event may not be from LinkedIn.'
+                  )}
+                  {event.validation_status === 'no_signature' && (
+                    'No signature provided. Unable to verify authenticity.'
+                  )}
+                  {event.validation_status === 'valid' && (
+                    'Signature verified successfully. This event is from LinkedIn.'
+                  )}
+                  {!event.validation_status && (
+                    'This is an actual event notification from LinkedIn.'
+                  )}
                 </p>
               </div>
             )}
