@@ -16,7 +16,19 @@ export function validateLinkedInSignature(
     hmac.update(payload);
     const expectedSignature = hmac.digest('hex');
 
-    return signature === expectedSignature;
+    const isValid = signature === expectedSignature;
+
+    // Debug logging
+    console.log('Signature Validation Debug:', {
+      received: signature,
+      computed: expectedSignature,
+      payloadLength: payload.length,
+      payloadPreview: payload.substring(0, 100),
+      secretPrefix: clientSecret.substring(0, 4) + '***',
+      isValid,
+    });
+
+    return isValid;
   } catch (error) {
     console.error('Error validating signature:', error);
     return false;

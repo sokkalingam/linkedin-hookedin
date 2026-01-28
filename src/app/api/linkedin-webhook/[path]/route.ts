@@ -89,6 +89,14 @@ export async function POST(
 
     if (signature) {
       const clientSecret = decryptSecret(webhook.encrypted_secret);
+      console.log('Validating signature:', {
+        webhookPath: path,
+        signaturePresent: !!signature,
+        bodyTextLength: bodyText.length,
+        secretDecrypted: clientSecret.length > 0,
+        secretLength: clientSecret.length,
+      });
+
       const isValid = validateLinkedInSignature(bodyText, signature, clientSecret);
 
       if (isValid) {
