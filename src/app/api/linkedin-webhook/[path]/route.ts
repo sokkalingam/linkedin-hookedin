@@ -197,14 +197,18 @@ export async function GET(
       headers[key] = value;
     });
 
-    supabase.from('events').insert({
-      webhook_id: webhook.id,
-      event_type: 'challenge',
-      headers: headers,
-      payload: { challengeCode, challengeResponse },
-    }).catch((err) => {
-      console.error('Error storing challenge event:', err);
-    });
+    (async () => {
+      try {
+        await supabase.from('events').insert({
+          webhook_id: webhook.id,
+          event_type: 'challenge',
+          headers: headers,
+          payload: { challengeCode, challengeResponse },
+        });
+      } catch (err) {
+        console.error('Error storing challenge event:', err);
+      }
+    })();
 
     // Return JSON response as per LinkedIn spec
     return NextResponse.json(
