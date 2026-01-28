@@ -146,7 +146,7 @@ export async function POST(
   }
 }
 
-// Also handle GET for challenge requests (LinkedIn sometimes sends GET)
+// Handle GET for LinkedIn challenge validation
 export async function GET(
   request: NextRequest,
   { params }: { params: { path: string } }
@@ -154,9 +154,11 @@ export async function GET(
   try {
     const { path } = params;
     const searchParams = request.nextUrl.searchParams;
-    const challenge = searchParams.get('challenge');
+    const challengeCode = searchParams.get('challengeCode');
 
-    if (!challenge) {
+    console.log('LinkedIn webhook GET received:', { path, challengeCode });
+
+    if (!challengeCode) {
       return NextResponse.json(
         { message: 'Webhook endpoint active' },
         { status: 200 }
@@ -171,32 +173,47 @@ export async function GET(
       .single();
 
     if (webhookError || !webhook) {
+      console.error('Webhook not found:', path, webhookError);
       return NextResponse.json(
         { error: 'Webhook not found' },
         { status: 404 }
       );
     }
 
-    // Get headers
+    // Decrypt client secret
+    const clientSecret = decryptSecret(webhook.encrypted_secret);
+
+    // Compute challenge response: HMAC-SHA256(challengeCode, clientSecret) as hex
+    const crypto = require('crypto');
+    const hmac = crypto.createHmac('sha256', clientSecret);
+    hmac.update(challengeCode);
+    const challengeResponse = hmac.digest('hex');
+
+    console.log('Challenge validation:', { challengeCode, challengeResponse });
+
+    // Store challenge event asynchronously
     const headers: Record<string, string> = {};
     request.headers.forEach((value, key) => {
       headers[key] = value;
     });
 
-    // Store challenge event
-    await supabase.from('events').insert({
+    supabase.from('events').insert({
       webhook_id: webhook.id,
       event_type: 'challenge',
       headers: headers,
-      payload: { challenge },
+      payload: { challengeCode, challengeResponse },
+    }).catch((err) => {
+      console.error('Error storing challenge event:', err);
     });
 
-    // Respond to challenge
-    const challengeResponse = handleChallenge(challenge);
-    return new NextResponse(challengeResponse, {
-      status: 200,
-      headers: { 'Content-Type': 'text/plain' },
-    });
+    // Return JSON response as per LinkedIn spec
+    return NextResponse.json(
+      { challengeCode, challengeResponse },
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   } catch (error) {
     console.error('Error in LinkedIn webhook GET handler:', error);
     return NextResponse.json(
