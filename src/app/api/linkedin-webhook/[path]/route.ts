@@ -27,29 +27,31 @@ export async function POST(
       console.log('Challenge request detected, responding with:', body.challenge);
       
       // Store challenge event asynchronously (don't block response)
-      supabase
-        .from('webhooks')
-        .select('id')
-        .eq('webhook_path', path)
-        .single()
-        .then(({ data: webhook }) => {
+      (async () => {
+        try {
+          const { data: webhook } = await supabase
+            .from('webhooks')
+            .select('id')
+            .eq('webhook_path', path)
+            .single();
+          
           if (webhook) {
             const headers: Record<string, string> = {};
             request.headers.forEach((value, key) => {
               headers[key] = value;
             });
             
-            return supabase.from('events').insert({
+            await supabase.from('events').insert({
               webhook_id: webhook.id,
               event_type: 'challenge',
               headers: headers,
               payload: body,
             });
           }
-        })
-        .catch((err) => {
+        } catch (err) {
           console.error('Error storing challenge event:', err);
-        });
+        }
+      })();
 
       // Respond immediately
       const challengeResponse = handleChallenge(body.challenge);
