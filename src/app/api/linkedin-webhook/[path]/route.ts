@@ -10,20 +10,6 @@ export async function POST(
   try {
     const { path } = params;
 
-    // Find webhook by path
-    const { data: webhook, error: webhookError } = await supabase
-      .from('webhooks')
-      .select('*')
-      .eq('webhook_path', path)
-      .single();
-
-    if (webhookError || !webhook) {
-      return NextResponse.json(
-        { error: 'Webhook not found' },
-        { status: 404 }
-      );
-    }
-
     // Get request body as text for signature validation
     const bodyText = await request.text();
     let body: any;
@@ -34,29 +20,65 @@ export async function POST(
       body = {};
     }
 
-    // Get headers
-    const headers: Record<string, string> = {};
-    request.headers.forEach((value, key) => {
-      headers[key] = value;
-    });
+    console.log('LinkedIn webhook POST received:', { path, body });
 
-    // Check if this is a challenge request
+    // Check if this is a challenge request - respond immediately without DB lookup
     if (body.challenge) {
-      // Store challenge event
-      await supabase.from('events').insert({
-        webhook_id: webhook.id,
-        event_type: 'challenge',
-        headers: headers,
-        payload: body,
-      });
+      console.log('Challenge request detected, responding with:', body.challenge);
+      
+      // Store challenge event asynchronously (don't block response)
+      supabase
+        .from('webhooks')
+        .select('id')
+        .eq('webhook_path', path)
+        .single()
+        .then(({ data: webhook }) => {
+          if (webhook) {
+            const headers: Record<string, string> = {};
+            request.headers.forEach((value, key) => {
+              headers[key] = value;
+            });
+            
+            return supabase.from('events').insert({
+              webhook_id: webhook.id,
+              event_type: 'challenge',
+              headers: headers,
+              payload: body,
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Error storing challenge event:', err);
+        });
 
-      // Respond to challenge
+      // Respond immediately
       const challengeResponse = handleChallenge(body.challenge);
       return new NextResponse(challengeResponse, {
         status: 200,
         headers: { 'Content-Type': 'text/plain' },
       });
     }
+
+    // Find webhook by path for non-challenge requests
+    const { data: webhook, error: webhookError } = await supabase
+      .from('webhooks')
+      .select('*')
+      .eq('webhook_path', path)
+      .single();
+
+    if (webhookError || !webhook) {
+      console.error('Webhook not found:', path, webhookError);
+      return NextResponse.json(
+        { error: 'Webhook not found' },
+        { status: 404 }
+      );
+    }
+
+    // Get headers
+    const headers: Record<string, string> = {};
+    request.headers.forEach((value, key) => {
+      headers[key] = value;
+    });
 
     // Validate signature for actual events
     const signature = headers['x-li-signature'] || headers['X-Li-Signature'];
