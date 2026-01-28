@@ -152,11 +152,13 @@ export async function POST(
       }
     }
 
-    // Reject request if validation failed (but event was already stored)
+    // Return 200 even if validation failed (event was already stored)
+    // This prevents LinkedIn from disabling the webhook
     if (shouldReject) {
+      console.warn('Accepting event despite signature validation failure');
       return NextResponse.json(
-        { error: 'Invalid signature', stored: true },
-        { status: 401 }
+        { success: true, message: 'Event received (validation failed but accepted)', stored: true },
+        { status: 200 }
       );
     }
 
