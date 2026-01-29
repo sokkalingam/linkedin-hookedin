@@ -13,6 +13,7 @@ export default function EventList({ webhookId }: EventListProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchEvents = async () => {
     try {
@@ -51,6 +52,20 @@ export default function EventList({ webhookId }: EventListProps) {
     fetchEvents();
   };
 
+  // Filter events based on search query
+  const filteredEvents = events.filter((event) => {
+    if (!searchQuery.trim()) return true;
+
+    const query = searchQuery.toLowerCase();
+
+    // Convert headers and payload to searchable strings
+    const headersString = JSON.stringify(event.headers).toLowerCase();
+    const payloadString = JSON.stringify(event.payload).toLowerCase();
+
+    // Search in both headers and payload
+    return headersString.includes(query) || payloadString.includes(query);
+  });
+
   if (loading && events.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">Loading events...</div>
@@ -70,7 +85,7 @@ export default function EventList({ webhookId }: EventListProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold text-gray-800">
-            Events ({events.length})
+            Events ({searchQuery.trim() ? `${filteredEvents.length} of ${events.length}` : events.length})
           </h3>
           <button
             onClick={handleManualRefresh}
@@ -92,6 +107,32 @@ export default function EventList({ webhookId }: EventListProps) {
         </label>
       </div>
 
+      {/* Search Input */}
+      <div className="mb-4">
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="🔍 Search in payload or headers..."
+            className="w-full px-4 py-2.5 pr-20 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin focus:border-transparent transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        {searchQuery.trim() && filteredEvents.length === 0 && (
+          <p className="text-sm text-gray-500 mt-2">
+            No events match your search query.
+          </p>
+        )}
+      </div>
+
       {events.length === 0 ? (
         <div className="text-center py-12 text-gray-500 border border-gray-200 rounded-xl bg-gray-50/50">
           <p>No events received yet.</p>
@@ -102,7 +143,7 @@ export default function EventList({ webhookId }: EventListProps) {
         </div>
       ) : (
         <div className="space-y-3">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <EventItem key={event.id} event={event} />
           ))}
         </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import EventList from '@/components/EventList';
 import CopyButton from '@/components/CopyButton';
+import CodeGenerator from '@/components/CodeGenerator';
 
 interface Webhook {
   id: string;
@@ -168,6 +169,9 @@ export default function WebhookDetailPage() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <EventList webhookId={webhookId} />
         </div>
+
+        {/* Code Generator Section */}
+        <CodeGenerator clientId={webhook.clientId} />
       </div>
     </main>
   );
