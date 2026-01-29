@@ -93,9 +93,11 @@ export default function WebhookAnalyticsPage() {
     const challengeEvents = eventList.filter((e) => e.event_type === 'challenge').length;
     const notificationEvents = eventList.filter((e) => e.event_type === 'notification').length;
 
-    const validSignatures = eventList.filter((e) => e.validation_status === 'valid').length;
-    const invalidSignatures = eventList.filter((e) => e.validation_status === 'invalid').length;
-    const noSignatures = eventList.filter((e) => e.validation_status === 'no_signature').length;
+    // Only count validation status for notification events
+    const notificationEventsList = eventList.filter((e) => e.event_type === 'notification');
+    const validSignatures = notificationEventsList.filter((e) => e.validation_status === 'valid').length;
+    const invalidSignatures = notificationEventsList.filter((e) => e.validation_status === 'invalid').length;
+    const noSignatures = notificationEventsList.filter((e) => e.validation_status === 'no_signature').length;
 
     const latestEvent = eventList.length > 0 ? eventList[0].received_at : null;
 
@@ -103,10 +105,13 @@ export default function WebhookAnalyticsPage() {
       ? Math.floor((Date.now() - new Date(webhook.createdAt).getTime()) / (1000 * 60 * 60 * 24))
       : 0;
 
-    // Health score: 100% if all events have valid signatures
+    // Health score: Only calculate if there are notification events
+    // Cap at 100% maximum
     let healthScore = 100;
     if (notificationEvents > 0) {
-      healthScore = Math.round((validSignatures / notificationEvents) * 100);
+      healthScore = Math.min(100, Math.round((validSignatures / notificationEvents) * 100));
+    } else {
+      healthScore = -1; // Use -1 to indicate N/A
     }
 
     setAnalytics({
@@ -152,37 +157,44 @@ export default function WebhookAnalyticsPage() {
 
     const rangeMs = ranges[timeRange];
     const filteredEvents = events.filter(
-      (e) => now - new Date(e.received_at).getTime() < rangeMs
+      (e) => now - new Date(e.received_at).getTime() <= rangeMs
     );
 
-    // Group events by date
-    const eventsByDate: { [key: string]: { challenge: number; notification: number } } = {};
+    // Group events by date with timestamp for sorting
+    const eventsByDate: { [key: string]: { challenge: number; notification: number; timestamp: number } } = {};
 
     filteredEvents.forEach((event) => {
-      const date = new Date(event.received_at).toLocaleDateString('en-US', {
+      const eventDate = new Date(event.received_at);
+      const dateKey = eventDate.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
       });
 
-      if (!eventsByDate[date]) {
-        eventsByDate[date] = { challenge: 0, notification: 0 };
+      if (!eventsByDate[dateKey]) {
+        eventsByDate[dateKey] = {
+          challenge: 0,
+          notification: 0,
+          timestamp: eventDate.getTime()
+        };
       }
 
       if (event.event_type === 'challenge') {
-        eventsByDate[date].challenge++;
+        eventsByDate[dateKey].challenge++;
       } else {
-        eventsByDate[date].notification++;
+        eventsByDate[dateKey].notification++;
       }
     });
 
-    // Convert to array format for Recharts
+    // Convert to array format for Recharts and sort by timestamp (oldest to newest)
     return Object.entries(eventsByDate)
-      .map(([date, counts]) => ({
+      .map(([date, data]) => ({
         date,
-        Challenge: counts.challenge,
-        Notification: counts.notification,
+        Challenge: data.challenge,
+        Notification: data.notification,
+        timestamp: data.timestamp,
       }))
-      .reverse();
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .map(({ date, Challenge, Notification }) => ({ date, Challenge, Notification }));
   };
 
   // Event type breakdown data for pie chart
@@ -477,32 +489,45 @@ export default function WebhookAnalyticsPage() {
 
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Health Score</p>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-gray-200 rounded-full h-3">
-                      <div
-                        className={`h-3 rounded-full transition-all ${
-                          analytics.healthScore >= 90
-                            ? 'bg-green-500'
-                            : analytics.healthScore >= 70
-                            ? 'bg-yellow-500'
-                            : 'bg-red-500'
-                        }`}
-                        style={{ width: `${analytics.healthScore}%` }}
-                      />
-                    </div>
-                    <span className="text-2xl font-bold text-gray-900">
-                      {analytics.healthScore}%
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    {analytics.healthScore === 100
-                      ? 'Perfect! All signatures are valid.'
-                      : analytics.healthScore >= 90
-                      ? 'Great! Most signatures are valid.'
-                      : analytics.healthScore >= 70
-                      ? 'Good, but some signatures are invalid.'
-                      : 'Warning: Many invalid signatures detected.'}
-                  </p>
+                  {analytics.healthScore >= 0 ? (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 bg-gray-200 rounded-full h-3">
+                          <div
+                            className={`h-3 rounded-full transition-all ${
+                              analytics.healthScore >= 90
+                                ? 'bg-green-500'
+                                : analytics.healthScore >= 70
+                                ? 'bg-yellow-500'
+                                : 'bg-red-500'
+                            }`}
+                            style={{ width: `${Math.min(100, analytics.healthScore)}%` }}
+                          />
+                        </div>
+                        <span className="text-2xl font-bold text-gray-900">
+                          {analytics.healthScore}%
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {analytics.healthScore === 100
+                          ? 'Perfect! All signatures are valid.'
+                          : analytics.healthScore >= 90
+                          ? 'Great! Most signatures are valid.'
+                          : analytics.healthScore >= 70
+                          ? 'Good, but some signatures are invalid.'
+                          : 'Warning: Many invalid signatures detected.'}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl font-bold text-gray-500">N/A</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        No notification events to validate yet.
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
