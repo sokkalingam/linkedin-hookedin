@@ -10,7 +10,10 @@ interface CopyButtonProps {
 export default function CopyButton({ text, className = '' }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -23,10 +26,11 @@ export default function CopyButton({ text, className = '' }: CopyButtonProps) {
   return (
     <button
       onClick={handleCopy}
-      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+      disabled={copied}
+      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap ${
         copied
-          ? 'bg-green-500 text-white'
-          : 'bg-linkedin text-white hover:bg-blue-700'
+          ? 'bg-green-500 text-white scale-105'
+          : 'bg-linkedin text-white hover:bg-blue-700 active:scale-95'
       } ${className}`}
     >
       {copied ? '✓ Copied!' : 'Copy'}
