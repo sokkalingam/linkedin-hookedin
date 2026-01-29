@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import EventList from './EventList';
 import CopyButton from './CopyButton';
 
@@ -12,21 +13,32 @@ interface Webhook {
 }
 
 export default function WebhookDashboard() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [clientId, setClientId] = useState('');
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedWebhookId, setSelectedWebhookId] = useState<string | null>(null);
 
-  const handleRetrieve = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Load client ID from URL on mount
+  useEffect(() => {
+    const clientIdFromUrl = searchParams.get('clientId');
+    if (clientIdFromUrl) {
+      setClientId(clientIdFromUrl);
+      // Auto-retrieve if client ID is in URL
+      fetchWebhooks(clientIdFromUrl);
+    }
+  }, []);
+
+  const fetchWebhooks = async (id: string) => {
     setLoading(true);
     setError(null);
     setSelectedWebhookId(null);
 
     try {
       const response = await fetch(
-        `/api/webhooks/retrieve?clientId=${encodeURIComponent(clientId)}`
+        `/api/webhooks/retrieve?clientId=${encodeURIComponent(id)}`
       );
       const data = await response.json();
 
@@ -45,6 +57,15 @@ export default function WebhookDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRetrieve = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Update URL with client ID
+    router.push(`/manage?clientId=${encodeURIComponent(clientId)}`);
+
+    await fetchWebhooks(clientId);
   };
 
   const handleDelete = async (webhookId: string) => {

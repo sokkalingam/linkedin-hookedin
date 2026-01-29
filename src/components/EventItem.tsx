@@ -104,7 +104,10 @@ export default function EventItem({ event }: EventItemProps) {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-semibold text-gray-700">Headers</h4>
-                <CopyButton text={JSON.stringify(event.headers, null, 2)} />
+                <CopyButton
+                  key={`headers-${event.id}`}
+                  text={JSON.stringify(event.headers, null, 2)}
+                />
               </div>
               <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 overflow-x-auto">
                 <JSONViewer data={event.headers} />
@@ -115,7 +118,10 @@ export default function EventItem({ event }: EventItemProps) {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-semibold text-gray-700">Payload</h4>
-                <CopyButton text={JSON.stringify(event.payload, null, 2)} />
+                <CopyButton
+                  key={`payload-${event.id}`}
+                  text={JSON.stringify(event.payload, null, 2)}
+                />
               </div>
               <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 overflow-x-auto">
                 <JSONViewer data={event.payload} />

@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import CopyButton from '@/components/CopyButton';
 
 interface Webhook {
   id: string;
@@ -10,20 +12,31 @@ interface Webhook {
   createdAt: string;
 }
 
-export default function ManagePage() {
+function ManagePageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [clientId, setClientId] = useState('');
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleRetrieve = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Load client ID from URL on mount
+  useEffect(() => {
+    const clientIdFromUrl = searchParams.get('clientId');
+    if (clientIdFromUrl) {
+      setClientId(clientIdFromUrl);
+      // Auto-retrieve if client ID is in URL
+      fetchWebhooks(clientIdFromUrl);
+    }
+  }, []);
+
+  const fetchWebhooks = async (id: string) => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await fetch(
-        `/api/webhooks/retrieve?clientId=${encodeURIComponent(clientId)}`
+        `/api/webhooks/retrieve?clientId=${encodeURIComponent(id)}`
       );
       const data = await response.json();
 
@@ -42,6 +55,15 @@ export default function ManagePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRetrieve = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Update URL with client ID
+    router.push(`/manage?clientId=${encodeURIComponent(clientId)}`);
+
+    await fetchWebhooks(clientId);
   };
 
   const handleDelete = async (webhookId: string) => {
@@ -64,10 +86,6 @@ export default function ManagePage() {
     } catch (err) {
       alert('Failed to delete webhook. Please try again.');
     }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
   };
 
   return (
@@ -148,18 +166,13 @@ export default function ManagePage() {
                 </div>
 
                 <div className="mb-4">
-                  <p className="text-sm text-gray-500 mb-1">Full URL:</p>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 text-xs bg-gray-100 p-2 rounded overflow-x-auto">
-                      {webhook.webhookUrl}
-                    </code>
-                    <button
-                      onClick={() => copyToClipboard(webhook.webhookUrl)}
-                      className="px-3 py-1 bg-linkedin text-white rounded hover:bg-blue-700 text-sm whitespace-nowrap"
-                    >
-                      Copy
-                    </button>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm text-gray-500">Full URL:</p>
+                    <CopyButton key={`copy-${webhook.id}`} text={webhook.webhookUrl} />
                   </div>
+                  <code className="block text-xs bg-gray-100 p-2 rounded overflow-x-auto">
+                    {webhook.webhookUrl}
+                  </code>
                 </div>
 
                 <Link
@@ -174,5 +187,21 @@ export default function ManagePage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function ManagePage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center py-12">
+            <p className="text-gray-500">Loading...</p>
+          </div>
+        </div>
+      </main>
+    }>
+      <ManagePageContent />
+    </Suspense>
   );
 }
