@@ -53,6 +53,16 @@ export default function Navigation() {
             >
               Manage Webhooks
             </Link>
+            <Link
+              href="/code-generator"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                isActive('/code-generator')
+                  ? 'bg-linkedin text-white'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              Code Generator
+            </Link>
           </div>
         </div>
       </div>

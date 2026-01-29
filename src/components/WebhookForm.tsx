@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CreateWebhookResponse } from '@/lib/types';
 import CopyButton from './CopyButton';
+import Link from 'next/link';
 
 export default function WebhookForm() {
   const [clientId, setClientId] = useState('');
@@ -11,6 +12,7 @@ export default function WebhookForm() {
   const [useCustomPath, setUseCustomPath] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CreateWebhookResponse | null>(null);
+  const [createdClientId, setCreatedClientId] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +34,7 @@ export default function WebhookForm() {
       setResult(data);
 
       if (data.success) {
+        setCreatedClientId(clientId); // Save client ID for code generator link
         setClientId('');
         setClientSecret('');
         setCustomPath('');
@@ -134,7 +137,7 @@ export default function WebhookForm() {
               <p className="text-green-800 font-medium mb-3">
                 ✓ Webhook created successfully!
               </p>
-              <div className="bg-white p-4 rounded-lg border border-green-200">
+              <div className="bg-white p-4 rounded-lg border border-green-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm text-gray-600">Your webhook URL:</p>
                   <CopyButton text={result.webhookUrl!} />
@@ -143,6 +146,12 @@ export default function WebhookForm() {
                   {result.webhookUrl}
                 </code>
               </div>
+              <Link
+                href={`/code-generator?clientId=${encodeURIComponent(createdClientId)}`}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-linkedin text-white rounded-lg hover:bg-blue-700 transition-all font-medium text-sm w-full justify-center"
+              >
+                💻 Generate Server Code
+              </Link>
             </div>
           ) : (
             <p className="text-red-800">✗ {result.error}</p>

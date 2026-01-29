@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import EventList from '@/components/EventList';
 import CopyButton from '@/components/CopyButton';
-import CodeGenerator from '@/components/CodeGenerator';
+import Link from 'next/link';
 
 interface Webhook {
   id: string;
@@ -170,8 +170,18 @@ export default function WebhookDetailPage() {
           <EventList webhookId={webhookId} />
         </div>
 
-        {/* Code Generator Section */}
-        <CodeGenerator clientId={webhook.clientId} />
+        {/* Code Generator Link */}
+        <div className="mt-6 text-center">
+          <Link
+            href={`/code-generator?clientId=${encodeURIComponent(webhook.clientId)}`}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-linkedin text-white rounded-lg hover:bg-blue-700 transition-all font-medium shadow-sm"
+          >
+            💻 Generate Server Code
+          </Link>
+          <p className="text-sm text-gray-500 mt-2">
+            Get a ready-to-deploy Node.js webhook server with correct signature validation
+          </p>
+        </div>
       </div>
     </main>
   );

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import EventList from './EventList';
 import CopyButton from './CopyButton';
+import Link from 'next/link';
 
 interface Webhook {
   id: string;
@@ -132,10 +133,16 @@ export default function WebhookDashboard() {
 
       {webhooks.length > 0 && (
         <div className="space-y-4">
-          <div className="pb-3 border-b border-gray-200">
+          <div className="pb-3 border-b border-gray-200 flex items-center justify-between">
             <p className="text-sm text-gray-600">
               {webhooks.length} / 3 webhook{webhooks.length !== 1 ? 's' : ''} created
             </p>
+            <Link
+              href={`/code-generator?clientId=${encodeURIComponent(clientId)}`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-linkedin text-white rounded-lg hover:bg-blue-700 transition-all font-medium text-sm"
+            >
+              💻 Generate Server Code
+            </Link>
           </div>
 
           {webhooks.map((webhook) => (
