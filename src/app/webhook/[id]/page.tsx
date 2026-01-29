@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import EventList from '@/components/EventList';
+import CopyButton from '@/components/CopyButton';
 
 interface Webhook {
   id: string;
@@ -64,10 +65,6 @@ export default function WebhookDetailPage() {
     } catch (err) {
       alert('Failed to delete webhook. Please try again.');
     }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
   };
 
   if (loading) {
@@ -148,18 +145,13 @@ export default function WebhookDetailPage() {
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Full URL:</p>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 text-xs bg-gray-100 p-2 rounded overflow-x-auto">
-                      {webhook.webhookUrl}
-                    </code>
-                    <button
-                      onClick={() => copyToClipboard(webhook.webhookUrl)}
-                      className="px-3 py-1 bg-linkedin text-white rounded hover:bg-blue-700 text-sm whitespace-nowrap"
-                    >
-                      Copy
-                    </button>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm text-gray-500">Full URL:</p>
+                    <CopyButton text={webhook.webhookUrl} />
                   </div>
+                  <code className="block text-xs bg-gray-100 p-2 rounded overflow-x-auto">
+                    {webhook.webhookUrl}
+                  </code>
                 </div>
               </div>
             </div>
