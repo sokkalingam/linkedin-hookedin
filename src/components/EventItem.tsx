@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { WebhookEvent } from '@/lib/types';
+import JSONViewer from './JSONViewer';
+import CopyButton from './CopyButton';
 
 interface EventItemProps {
   event: WebhookEvent;
@@ -55,13 +57,13 @@ export default function EventItem({ event }: EventItemProps) {
   };
 
   return (
-    <div className="border border-gray-300 rounded-lg overflow-hidden">
+    <div className="border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all">
       <div
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <span className="text-gray-400 text-lg">
+          <span className="text-gray-300 text-sm">
             {expanded ? '▼' : '▶'}
           </span>
           <div>
@@ -87,8 +89,8 @@ export default function EventItem({ event }: EventItemProps) {
               </span>
             </div>
             {!expanded && (
-              <p className="text-sm text-gray-600">
-                Click to view details
+              <p className="text-sm text-gray-400">
+                View details
               </p>
             )}
           </div>
@@ -96,75 +98,59 @@ export default function EventItem({ event }: EventItemProps) {
       </div>
 
       {expanded && (
-        <div className="border-t border-gray-300 p-4 bg-gray-50">
+        <div className="border-t border-gray-200 p-4 bg-white">
           <div className="space-y-4">
             {/* Headers Section */}
             <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                Headers
-              </h4>
-              <div className="bg-white p-3 rounded border border-gray-200 overflow-x-auto">
-                <pre className="text-xs">
-                  {JSON.stringify(event.headers, null, 2)}
-                </pre>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-semibold text-gray-700">Headers</h4>
+                <CopyButton text={JSON.stringify(event.headers, null, 2)} />
+              </div>
+              <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 overflow-x-auto">
+                <JSONViewer data={event.headers} />
               </div>
             </div>
 
             {/* Payload Section */}
             <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                Payload
-              </h4>
-              <div className="bg-white p-3 rounded border border-gray-200 overflow-x-auto">
-                <pre className="text-xs">
-                  {JSON.stringify(event.payload, null, 2)}
-                </pre>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-semibold text-gray-700">Payload</h4>
+                <CopyButton text={JSON.stringify(event.payload, null, 2)} />
+              </div>
+              <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 overflow-x-auto">
+                <JSONViewer data={event.payload} />
               </div>
             </div>
 
             {/* Event Type Specific Info */}
             {event.event_type === 'challenge' && (
-              <div className="bg-blue-50 p-3 rounded border border-blue-200">
+              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p className="text-sm text-blue-800">
-                  <strong>Challenge Validation:</strong> This is a validation
-                  request from LinkedIn. The challenge code was automatically
-                  returned to verify this webhook endpoint.
+                  Challenge validation event. Endpoint verified.
                 </p>
               </div>
             )}
 
-            {event.event_type === 'notification' && (
-              <div
-                className={`p-3 rounded border ${
-                  event.validation_status === 'invalid'
-                    ? 'bg-red-50 border-red-200'
-                    : event.validation_status === 'no_signature'
-                    ? 'bg-yellow-50 border-yellow-200'
-                    : 'bg-green-50 border-green-200'
-                }`}
-              >
-                <p
-                  className={`text-sm ${
-                    event.validation_status === 'invalid'
-                      ? 'text-red-800'
-                      : event.validation_status === 'no_signature'
-                      ? 'text-yellow-800'
-                      : 'text-green-800'
-                  }`}
-                >
-                  <strong>Event Notification:</strong>{' '}
-                  {event.validation_status === 'invalid' && (
-                    'Signature validation FAILED. This event may not be from LinkedIn.'
-                  )}
-                  {event.validation_status === 'no_signature' && (
-                    'No signature provided. Unable to verify authenticity.'
-                  )}
-                  {event.validation_status === 'valid' && (
-                    'Signature verified successfully. This event is from LinkedIn.'
-                  )}
-                  {!event.validation_status && (
-                    'This is an actual event notification from LinkedIn.'
-                  )}
+            {event.event_type === 'notification' && event.validation_status === 'invalid' && (
+              <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+                <p className="text-sm text-red-800">
+                  Signature validation failed.
+                </p>
+              </div>
+            )}
+
+            {event.event_type === 'notification' && event.validation_status === 'no_signature' && (
+              <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                <p className="text-sm text-yellow-800">
+                  No signature provided.
+                </p>
+              </div>
+            )}
+
+            {event.event_type === 'notification' && event.validation_status === 'valid' && (
+              <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                <p className="text-sm text-green-800">
+                  Signature verified.
                 </p>
               </div>
             )}

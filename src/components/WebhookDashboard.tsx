@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import EventList from './EventList';
+import CopyButton from './CopyButton';
 
 interface Webhook {
   id: string;
@@ -71,89 +72,74 @@ export default function WebhookDashboard() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">
-        View Your Webhooks
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+      <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+        Your Webhooks
       </h2>
 
-      <form onSubmit={handleRetrieve} className="space-y-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            LinkedIn Client ID
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={clientId}
-              onChange={(e) => setClientId(e.target.value)}
-              required
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-linkedin"
-              placeholder="Enter your LinkedIn app client ID"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-linkedin text-white py-2 px-6 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Loading...' : 'Retrieve'}
-            </button>
-          </div>
+      <form onSubmit={handleRetrieve} className="mb-8">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            value={clientId}
+            onChange={(e) => setClientId(e.target.value)}
+            required
+            className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin focus:border-transparent transition-all"
+            placeholder="LinkedIn Client ID"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-linkedin text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all font-medium"
+          >
+            {loading ? 'Loading...' : 'Retrieve'}
+          </button>
         </div>
       </form>
 
       {error && (
-        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p className="text-yellow-800">{error}</p>
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-sm text-yellow-800">{error}</p>
         </div>
       )}
 
       {webhooks.length > 0 && (
         <div className="space-y-4">
-          <div className="border-b pb-2">
-            <p className="text-sm text-gray-600">
-              {webhooks.length} / 3 webhook{webhooks.length !== 1 ? 's' : ''}{' '}
-              created
+          <div className="pb-3 border-b border-gray-200">
+            <p className="text-sm text-gray-500">
+              {webhooks.length} / 3 webhooks
             </p>
           </div>
 
           {webhooks.map((webhook) => (
             <div
               key={webhook.id}
-              className="border border-gray-200 rounded-lg p-4"
+              className="border border-gray-200 rounded-xl p-5 hover:border-gray-300 transition-all"
             >
-              <div className="flex items-start justify-between mb-2">
+              <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500 mb-1">Webhook Path:</p>
-                  <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                  <p className="text-xs text-gray-500 mb-1.5">Path</p>
+                  <code className="text-sm bg-gray-50 px-3 py-1.5 rounded-lg font-mono">
                     {webhook.webhookPath}
                   </code>
                 </div>
                 <button
                   onClick={() => handleDelete(webhook.id)}
-                  className="ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                  className="ml-3 px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium transition-colors"
                 >
                   Delete
                 </button>
               </div>
 
-              <div className="mb-3">
-                <p className="text-sm text-gray-500 mb-1">Full URL:</p>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 text-xs bg-gray-100 p-2 rounded overflow-x-auto">
-                    {webhook.webhookUrl}
-                  </code>
-                  <button
-                    onClick={() => copyToClipboard(webhook.webhookUrl)}
-                    className="px-3 py-1 bg-linkedin text-white rounded hover:bg-blue-700 text-sm whitespace-nowrap"
-                  >
-                    Copy
-                  </button>
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="text-xs text-gray-500">URL</p>
+                  <CopyButton text={webhook.webhookUrl} />
                 </div>
+                <code className="block text-xs bg-gray-50 p-3 rounded-lg overflow-x-auto font-mono text-gray-700">
+                  {webhook.webhookUrl}
+                </code>
               </div>
 
               <button
@@ -162,7 +148,7 @@ export default function WebhookDashboard() {
                     selectedWebhookId === webhook.id ? null : webhook.id
                   )
                 }
-                className="text-linkedin hover:text-blue-700 text-sm font-medium"
+                className="text-linkedin hover:text-blue-700 text-sm font-medium transition-colors"
               >
                 {selectedWebhookId === webhook.id
                   ? '▼ Hide Events'

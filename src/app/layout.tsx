@@ -4,7 +4,7 @@ import Navigation from '@/components/Navigation';
 
 export const metadata: Metadata = {
   title: 'HookedIn - LinkedIn Webhook Testing',
-  description: 'Get HookedIn. The fastest way to test LinkedIn webhooks. Spin up endpoints, receive events, validate integrations—all in one place.',
+  description: 'Test LinkedIn webhooks instantly. Create endpoints. Receive events. Validate.',
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-gray-50">
         <Navigation />
         {children}
       </body>
