@@ -267,20 +267,12 @@ export default function WebhookAnalyticsPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex gap-4 mb-4">
-            <Link
-              href={`/webhook/${webhookId}`}
-              className="text-linkedin hover:underline inline-flex items-center"
-            >
-              ← Back to Webhook Details
-            </Link>
-            <Link
-              href={`/manage?clientId=${encodeURIComponent(webhook.clientId)}`}
-              className="text-linkedin hover:underline inline-flex items-center"
-            >
-              ← Back to Manage Webhooks
-            </Link>
-          </div>
+          <Link
+            href={`/webhook/${webhookId}`}
+            className="text-linkedin hover:underline mb-4 inline-flex items-center"
+          >
+            ← Back to Webhook Details
+          </Link>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
