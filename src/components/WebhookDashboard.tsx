@@ -175,18 +175,26 @@ export default function WebhookDashboard() {
                 </code>
               </div>
 
-              <button
-                onClick={() =>
-                  setSelectedWebhookId(
-                    selectedWebhookId === webhook.id ? null : webhook.id
-                  )
-                }
-                className="text-linkedin hover:text-blue-700 text-sm font-medium transition-colors"
-              >
-                {selectedWebhookId === webhook.id
-                  ? '▼ Hide Events'
-                  : '▶ View Events'}
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() =>
+                    setSelectedWebhookId(
+                      selectedWebhookId === webhook.id ? null : webhook.id
+                    )
+                  }
+                  className="text-linkedin hover:text-blue-700 text-sm font-medium transition-colors"
+                >
+                  {selectedWebhookId === webhook.id
+                    ? '▼ Hide Events'
+                    : '▶ View Events'}
+                </button>
+                <Link
+                  href={`/webhook/${webhook.id}/analytics`}
+                  className="text-linkedin hover:text-blue-700 text-sm font-medium transition-colors"
+                >
+                  📊 Analytics
+                </Link>
+              </div>
 
               {selectedWebhookId === webhook.id && (
                 <div className="mt-4">

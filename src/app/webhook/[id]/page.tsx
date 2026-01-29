@@ -157,12 +157,20 @@ export default function WebhookDetailPage() {
               </div>
             </div>
 
-            <button
-              onClick={handleDelete}
-              className="ml-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-            >
-              Delete Webhook
-            </button>
+            <div className="ml-4 flex gap-2">
+              <Link
+                href={`/webhook/${webhookId}/analytics`}
+                className="px-4 py-2 bg-linkedin text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors inline-flex items-center gap-2"
+              >
+                📊 Analytics
+              </Link>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium transition-colors"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
 
@@ -170,17 +178,35 @@ export default function WebhookDetailPage() {
           <EventList webhookId={webhookId} />
         </div>
 
-        {/* Code Generator Link */}
-        <div className="mt-6 text-center">
-          <Link
-            href={`/code-generator?clientId=${encodeURIComponent(webhook.clientId)}`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-linkedin text-white rounded-lg hover:bg-blue-700 transition-all font-medium shadow-sm"
-          >
-            💻 Generate Server Code
-          </Link>
-          <p className="text-sm text-gray-500 mt-2">
-            Get a ready-to-deploy Node.js webhook server with correct signature validation
-          </p>
+        {/* Action Links */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+            <div className="text-3xl mb-3">📊</div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">View Analytics</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              See performance metrics, event charts, and health insights
+            </p>
+            <Link
+              href={`/webhook/${webhookId}/analytics`}
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-linkedin text-white rounded-lg hover:bg-blue-700 transition-all font-medium"
+            >
+              Open Analytics
+            </Link>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+            <div className="text-3xl mb-3">💻</div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Generate Server Code</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Get a ready-to-deploy Node.js webhook server with correct validation
+            </p>
+            <Link
+              href={`/code-generator?clientId=${encodeURIComponent(webhook.clientId)}`}
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-linkedin text-white rounded-lg hover:bg-blue-700 transition-all font-medium"
+            >
+              Generate Code
+            </Link>
+          </div>
         </div>
       </div>
     </main>
