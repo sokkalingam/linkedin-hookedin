@@ -41,7 +41,7 @@ export default function Navigation() {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
-              Create
+              Create Webhook
             </Link>
             <Link
               href="/manage"
@@ -51,7 +51,7 @@ export default function Navigation() {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
-              Manage
+              Manage Webhooks
             </Link>
           </div>
         </div>

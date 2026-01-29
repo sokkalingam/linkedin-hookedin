@@ -89,8 +89,8 @@ export default function EventItem({ event }: EventItemProps) {
               </span>
             </div>
             {!expanded && (
-              <p className="text-sm text-gray-400">
-                View details
+              <p className="text-sm text-gray-600">
+                Click to view details
               </p>
             )}
           </div>
@@ -126,31 +126,45 @@ export default function EventItem({ event }: EventItemProps) {
             {event.event_type === 'challenge' && (
               <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p className="text-sm text-blue-800">
-                  Challenge validation event. Endpoint verified.
+                  <strong>Challenge Validation:</strong> This is a validation
+                  request from LinkedIn. The challenge code was automatically
+                  returned to verify this webhook endpoint.
                 </p>
               </div>
             )}
 
-            {event.event_type === 'notification' && event.validation_status === 'invalid' && (
-              <div className="bg-red-50 p-3 rounded-lg border border-red-200">
-                <p className="text-sm text-red-800">
-                  Signature validation failed.
-                </p>
-              </div>
-            )}
-
-            {event.event_type === 'notification' && event.validation_status === 'no_signature' && (
-              <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                <p className="text-sm text-yellow-800">
-                  No signature provided.
-                </p>
-              </div>
-            )}
-
-            {event.event_type === 'notification' && event.validation_status === 'valid' && (
-              <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                <p className="text-sm text-green-800">
-                  Signature verified.
+            {event.event_type === 'notification' && (
+              <div
+                className={`p-3 rounded-lg border ${
+                  event.validation_status === 'invalid'
+                    ? 'bg-red-50 border-red-200'
+                    : event.validation_status === 'no_signature'
+                    ? 'bg-yellow-50 border-yellow-200'
+                    : 'bg-green-50 border-green-200'
+                }`}
+              >
+                <p
+                  className={`text-sm ${
+                    event.validation_status === 'invalid'
+                      ? 'text-red-800'
+                      : event.validation_status === 'no_signature'
+                      ? 'text-yellow-800'
+                      : 'text-green-800'
+                  }`}
+                >
+                  <strong>Event Notification:</strong>{' '}
+                  {event.validation_status === 'invalid' && (
+                    'Signature validation FAILED. This event may not be from LinkedIn.'
+                  )}
+                  {event.validation_status === 'no_signature' && (
+                    'No signature provided. Unable to verify authenticity.'
+                  )}
+                  {event.validation_status === 'valid' && (
+                    'Signature verified successfully. This event is from LinkedIn.'
+                  )}
+                  {!event.validation_status && (
+                    'This is an actual event notification from LinkedIn.'
+                  )}
                 </p>
               </div>
             )}

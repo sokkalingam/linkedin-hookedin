@@ -4,7 +4,7 @@ import Navigation from '@/components/Navigation';
 
 export const metadata: Metadata = {
   title: 'HookedIn - LinkedIn Webhook Testing',
-  description: 'Test LinkedIn webhooks instantly. Create endpoints. Receive events. Validate.',
+  description: 'Get HookedIn. The fastest way to test LinkedIn webhooks. Spin up endpoints, receive events, validate integrations—all in one place.',
 };
 
 export default function RootLayout({

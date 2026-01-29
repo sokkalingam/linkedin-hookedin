@@ -69,7 +69,7 @@ export default function EventList({ webhookId }: EventListProps) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h3 className="text-base font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-800">
             Events ({events.length})
           </h3>
           <button
@@ -77,7 +77,7 @@ export default function EventList({ webhookId }: EventListProps) {
             disabled={loading}
             className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-sm font-medium transition-colors"
           >
-            {loading ? '↻' : '↻'}
+            {loading ? '↻ Refreshing...' : '↻ Refresh'}
           </button>
         </div>
 
@@ -88,15 +88,16 @@ export default function EventList({ webhookId }: EventListProps) {
             onChange={(e) => setAutoRefresh(e.target.checked)}
             className="rounded border-gray-300 text-linkedin focus:ring-linkedin"
           />
-          <span className="text-gray-500">Auto (5s)</span>
+          <span className="text-gray-700">Auto-refresh (5s)</span>
         </label>
       </div>
 
       {events.length === 0 ? (
-        <div className="text-center py-12 text-gray-400 border border-gray-200 rounded-xl bg-gray-50/50">
-          <p className="text-sm">No events yet</p>
-          <p className="text-xs mt-1.5 text-gray-400">
-            Configure webhook in LinkedIn Developer Portal
+        <div className="text-center py-12 text-gray-500 border border-gray-200 rounded-xl bg-gray-50/50">
+          <p>No events received yet.</p>
+          <p className="text-sm mt-2">
+            Configure this webhook URL in your LinkedIn Developer App to start
+            receiving events.
           </p>
         </div>
       ) : (

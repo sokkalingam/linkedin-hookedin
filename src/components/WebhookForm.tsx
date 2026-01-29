@@ -50,13 +50,13 @@ export default function WebhookForm() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-        Create Webhook
+        Create New Webhook
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Client ID
+            LinkedIn Client ID *
           </label>
           <input
             type="text"
@@ -64,13 +64,13 @@ export default function WebhookForm() {
             onChange={(e) => setClientId(e.target.value)}
             required
             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin focus:border-transparent transition-all"
-            placeholder="LinkedIn Client ID"
+            placeholder="Enter your LinkedIn app client ID"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Client Secret
+            LinkedIn Client Secret *
           </label>
           <input
             type="password"
@@ -78,7 +78,7 @@ export default function WebhookForm() {
             onChange={(e) => setClientSecret(e.target.value)}
             required
             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin focus:border-transparent transition-all"
-            placeholder="LinkedIn Client Secret"
+            placeholder="Enter your LinkedIn app client secret"
           />
         </div>
 
@@ -91,7 +91,7 @@ export default function WebhookForm() {
               className="rounded border-gray-300 text-linkedin focus:ring-linkedin"
             />
             <span className="text-sm font-medium text-gray-700">
-              Custom path
+              Use custom webhook path
             </span>
           </label>
 
@@ -101,13 +101,13 @@ export default function WebhookForm() {
               value={customPath}
               onChange={(e) => setCustomPath(e.target.value.toLowerCase())}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin focus:border-transparent transition-all"
-              placeholder="my-webhook-path"
+              placeholder="dancing-orange (lowercase, alphanumeric, hyphens)"
               pattern="[a-z0-9-]{3,50}"
             />
           )}
           {!useCustomPath && (
-            <p className="text-sm text-gray-400">
-              Random path auto-generated
+            <p className="text-sm text-gray-500">
+              A random path will be generated (e.g., dancing-orange-123)
             </p>
           )}
         </div>
@@ -132,11 +132,11 @@ export default function WebhookForm() {
           {result.success ? (
             <div>
               <p className="text-green-800 font-medium mb-3">
-                ✓ Webhook created
+                ✓ Webhook created successfully!
               </p>
               <div className="bg-white p-4 rounded-lg border border-green-200">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-gray-500">Webhook URL</p>
+                  <p className="text-sm text-gray-600">Your webhook URL:</p>
                   <CopyButton text={result.webhookUrl!} />
                 </div>
                 <code className="block text-sm bg-gray-50 p-3 rounded-lg overflow-x-auto font-mono text-gray-700">
@@ -145,7 +145,7 @@ export default function WebhookForm() {
               </div>
             </div>
           ) : (
-            <p className="text-sm text-red-800">✗ {result.error}</p>
+            <p className="text-red-800">✗ {result.error}</p>
           )}
         </div>
       )}

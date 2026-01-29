@@ -75,26 +75,31 @@ export default function WebhookDashboard() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-        Your Webhooks
+        View Your Webhooks
       </h2>
 
       <form onSubmit={handleRetrieve} className="mb-8">
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            required
-            className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin focus:border-transparent transition-all"
-            placeholder="LinkedIn Client ID"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-linkedin text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all font-medium"
-          >
-            {loading ? 'Loading...' : 'Retrieve'}
-          </button>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            LinkedIn Client ID
+          </label>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={clientId}
+              onChange={(e) => setClientId(e.target.value)}
+              required
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-linkedin focus:border-transparent transition-all"
+              placeholder="Enter your LinkedIn app client ID"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-linkedin text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all font-medium"
+            >
+              {loading ? 'Loading...' : 'Retrieve'}
+            </button>
+          </div>
         </div>
       </form>
 
@@ -107,8 +112,8 @@ export default function WebhookDashboard() {
       {webhooks.length > 0 && (
         <div className="space-y-4">
           <div className="pb-3 border-b border-gray-200">
-            <p className="text-sm text-gray-500">
-              {webhooks.length} / 3 webhooks
+            <p className="text-sm text-gray-600">
+              {webhooks.length} / 3 webhook{webhooks.length !== 1 ? 's' : ''} created
             </p>
           </div>
 
@@ -119,7 +124,7 @@ export default function WebhookDashboard() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500 mb-1.5">Path</p>
+                  <p className="text-sm text-gray-500 mb-1.5">Webhook Path:</p>
                   <code className="text-sm bg-gray-50 px-3 py-1.5 rounded-lg font-mono">
                     {webhook.webhookPath}
                   </code>
@@ -134,7 +139,7 @@ export default function WebhookDashboard() {
 
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-1.5">
-                  <p className="text-xs text-gray-500">URL</p>
+                  <p className="text-sm text-gray-500">Full URL:</p>
                   <CopyButton text={webhook.webhookUrl} />
                 </div>
                 <code className="block text-xs bg-gray-50 p-3 rounded-lg overflow-x-auto font-mono text-gray-700">
