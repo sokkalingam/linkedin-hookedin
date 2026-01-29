@@ -103,7 +103,7 @@ export default function WebhookDetailPage() {
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
           <button
-            onClick={() => router.push('/manage')}
+            onClick={() => router.push(`/manage?clientId=${encodeURIComponent(webhook.clientId)}`)}
             className="text-linkedin hover:underline mb-4 inline-flex items-center"
           >
             ← Back to Manage Webhooks
