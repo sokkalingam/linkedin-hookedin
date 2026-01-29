@@ -140,7 +140,7 @@ export default function WebhookDashboard() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-1.5">
                   <p className="text-sm text-gray-500">Full URL:</p>
-                  <CopyButton text={webhook.webhookUrl} />
+                  <CopyButton key={`copy-${webhook.id}`} text={webhook.webhookUrl} />
                 </div>
                 <code className="block text-xs bg-gray-50 p-3 rounded-lg overflow-x-auto font-mono text-gray-700">
                   {webhook.webhookUrl}

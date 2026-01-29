@@ -27,9 +27,9 @@ export default function CopyButton({ text, className = '' }: CopyButtonProps) {
     <button
       onClick={handleCopy}
       disabled={copied}
-      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap ${
+      className={`inline-block px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap transform ${
         copied
-          ? 'bg-green-500 text-white scale-105'
+          ? 'bg-green-500 text-white scale-105 shadow-sm'
           : 'bg-linkedin text-white hover:bg-blue-700 active:scale-95'
       } ${className}`}
     >
