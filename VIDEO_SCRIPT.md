@@ -3,6 +3,7 @@
 **Target Duration:** 8-10 minutes
 **Format:** AI-generated presenter + screen recordings
 **Tone:** Professional but conversational, developer-to-developer
+**Event:** LinkedIn Internal Hackathon
 
 ---
 
@@ -38,63 +39,54 @@
 
 **SPEAKER:**
 
-Have you ever spent hours debugging an API integration [PAUSE] only to discover the documentation was wrong?
+Webhooks are powerful. [PAUSE] They enable real-time integrations that create amazing user experiences.
 
 [PAUSE]
 
-That's exactly what happened with LinkedIn webhooks. [PAUSE] And it's been costing developers [EMPHASIS] days [/EMPHASIS] of frustration.
+But getting from idea to working webhook? [PAUSE] That takes time. Infrastructure setup. Challenge validation. Signature implementation. Deployment.
 
 [PAUSE]
 
-I'm going to show you something that most developers never get to see. [PAUSE] The actual source code behind LinkedIn's webhook implementation. [PAUSE] And how we built a tool that fixes a problem that's been hidden for years.
+As LinkedIn engineers, we have something external developers don't: [PAUSE] insider knowledge of how our APIs work.
+
+[PAUSE]
+
+We used that knowledge to build a tool that helps everyone move faster.
 
 This is HookedIn. [PAUSE] Let's dive in.
 
 ---
 
-### SCENE 2: THE PROBLEM - PART 1 (0:45 - 2:15)
+### SCENE 2: THE DEVELOPER CHALLENGE (0:45 - 2:15)
 **🎤 AI PRESENTER**
 
 ---
 
 **SPEAKER:**
 
-Let me show you the problem. [PAUSE] When you want to integrate LinkedIn webhooks into your application, you need to do three things.
+Let me walk you through the typical webhook integration journey. [PAUSE] It requires several steps.
 
 [PAUSE]
 
-**First**, you need a publicly accessible HTTPS endpoint [EMPHASIS] before [/EMPHASIS] you can even test. That means you can't test locally. You need to deploy to production or set up tunneling tools like ngrok.
+**First**, you need infrastructure. A publicly accessible HTTPS endpoint [EMPHASIS] before [/EMPHASIS] you can test anything. That means deploying to production or setting up local tunneling.
 
 [PAUSE]
 
-**Second**, LinkedIn sends a "challenge" request to validate your endpoint. If you don't respond correctly, [EMPHASIS] your webhook is disabled. [/EMPHASIS] No second chances.
+**Second**, you implement challenge validation. LinkedIn sends a challenge request, and your endpoint must respond correctly on the first try.
 
 [PAUSE]
 
-**Third**, and this is where it gets interesting [PAUSE] you need to validate webhook signatures using HMAC-SHA-256.
+**Third**, you implement signature validation using HMAC-SHA-256. [PAUSE] This ensures events are authentic.
 
 [PAUSE]
 
-Sounds straightforward, right? [PAUSE] Let me show you LinkedIn's official documentation.
-
----
-
-**📺 SCREEN RECORDING** - Show LinkedIn's official documentation
-- Navigate to: https://learn.microsoft.com/en-us/linkedin/shared/api-guide/webhook-validation
-- Scroll to signature validation section
-- Highlight the relevant text
-
-**🎤 AI PRESENTER VOICEOVER:**
-
-LinkedIn's documentation says [SLOW] "The value of this header is the HMAC-SHA-256 hash of the JSON-encoded string representation of the POST body."
-
-Simple enough. Here's what that looks like in code.
+The signature validation is cryptographic, [PAUSE] which means implementation details matter. Let me show you what's involved.
 
 ---
 
 **📺 B-ROLL** - Show code snippet (text overlay):
 ```javascript
-// LinkedIn's documentation
+// Basic signature validation approach
 const hmac = crypto.createHmac('sha256', clientSecret);
 hmac.update(payload);
 const signature = hmac.digest('hex');
@@ -102,58 +94,62 @@ const signature = hmac.digest('hex');
 
 **🎤 AI PRESENTER VOICEOVER:**
 
-You implement exactly what the docs say. [PAUSE] But here's the problem.
+This looks straightforward. [PAUSE] But cryptographic operations require precise implementation. [PAUSE] Every byte matters.
 
-[PAUSE - 2 seconds]
+[PAUSE]
 
-**It fails. Every single time.**
+Getting this right typically involves several hours of research, implementation, and debugging.
 
 ---
 
-### SCENE 3: THE DISCOVERY (2:15 - 3:30)
+### SCENE 3: THE INSIGHT (2:15 - 3:30)
 **🎤 AI PRESENTER - Full screen**
 
 ---
 
 **SPEAKER:**
 
-After hours of debugging, we did something most developers can't do. [PAUSE] We accessed LinkedIn's actual source code.
+As LinkedIn engineers, we have access to something external developers don't: [PAUSE] the actual implementation.
 
 [PAUSE]
 
-And what we found was shocking.
+So we looked at how signature validation really works.
 
 ---
 
 **📺 SCREEN RECORDING / B-ROLL** - Show LINKEDIN_WEBHOOK_SIGNATURE_VALIDATION.md
 - Open the file
-- Scroll to the Java source code section
+- Scroll to the implementation details section
 - Highlight the key line
 
 **🎤 AI PRESENTER VOICEOVER:**
 
-This is from LinkedIn's actual Java implementation. [PAUSE] The file is called PartnerPushEventCredentialPlugin dot java.
+Here's what we found in the implementation. [PAUSE] The file is PartnerPushEventCredentialPlugin dot java.
 
 Look at this line: [SLOW] "string to sign equals SIGN_PREFIX plus payload"
 
 [PAUSE]
 
-LinkedIn prepends [EMPHASIS] "hmacsha256 equals" [/EMPHASIS] to the payload [EMPHASIS] before [/EMPHASIS] computing the HMAC.
+The implementation prepends [EMPHASIS] "hmacsha256 equals" [/EMPHASIS] to the payload [EMPHASIS] before [/EMPHASIS] computing the HMAC.
 
-This is [EMPHASIS] completely undocumented. [/EMPHASIS]
+This is an important implementation detail.
 
 ---
 
 **📺 B-ROLL** - Side-by-side comparison (text overlay):
 ```
-DOCUMENTED:                 ACTUAL:
+SIMPLIFIED:                 COMPLETE:
 hmac(payload)              hmac("hmacsha256=" + payload)
-        ❌                          ✅
+        ⚠️                          ✅
 ```
 
 **🎤 AI PRESENTER VOICEOVER:**
 
-The documentation says one thing. [PAUSE] The code does another. [PAUSE] Without access to the source code, you're stuck.
+Understanding the complete implementation is key to getting signature validation right.
+
+[PAUSE]
+
+This kind of insight is exactly what external developers need.
 
 ---
 
@@ -163,7 +159,7 @@ The documentation says one thing. [PAUSE] The code does another. [PAUSE] Without
 
 **SPEAKER:**
 
-That's why we built HookedIn. [PAUSE] We reverse-engineered LinkedIn's bugs so developers don't have to.
+That's why we built HookedIn. [PAUSE] To share our insider knowledge and help developers succeed faster.
 
 ---
 
@@ -358,40 +354,40 @@ Let's talk about impact.
 
 [PAUSE]
 
-Before HookedIn, integrating LinkedIn webhooks took [EMPHASIS] six to ten hours [/EMPHASIS] of setup and debugging. [PAUSE] Sometimes more. [PAUSE] Sometimes developers just gave up.
+Traditional webhook integration takes [EMPHASIS] six to ten hours. [/EMPHASIS] [PAUSE] Infrastructure setup, implementation, testing, debugging, deployment.
 
 [PAUSE]
 
-With HookedIn? [PAUSE] Two minutes.
+With HookedIn? [PAUSE] Two minutes to start testing.
 
 [PAUSE]
 
-We're not talking about a marginal improvement. [PAUSE] This is a [EMPHASIS] ninety-five percent reduction [/EMPHASIS] in developer time.
+This is a [EMPHASIS] ninety-five percent reduction [/EMPHASIS] in time-to-first-event.
 
 ---
 
 **📺 B-ROLL** - Show text/graphics:
 ```
-Before HookedIn:
-❌ 6-10+ hours of setup
-❌ Deploy to production to test
-❌ Signature validation fails mysteriously
-❌ No visibility into events
+Traditional Approach:
+⏱️ 6-10+ hours total
+🏗️ Infrastructure setup first
+🔍 Manual debugging process
+📊 No event visibility
 
-After HookedIn:
-✅ 2 minutes to working webhook
-✅ Test instantly without deployment
-✅ Correct validation out of the box
+HookedIn Approach:
+✅ 2 minutes to start testing
+✅ Zero infrastructure needed
+✅ Complete validation examples
 ✅ Real-time monitoring + analytics
 ```
 
 **🎤 AI PRESENTER VOICEOVER:**
 
-Think about this. [PAUSE] If one thousand developers each spend ten hours fighting LinkedIn webhooks, [PAUSE] that's ten thousand hours of wasted engineering time.
+Think about our developer ecosystem. [PAUSE] Thousands of developers building on LinkedIn's platform.
 
 [PAUSE]
 
-HookedIn gives those hours back.
+Every hour saved in webhook setup is an hour spent building amazing integrations.
 
 ---
 
@@ -402,15 +398,15 @@ HookedIn gives those hours back.
 
 **SPEAKER:**
 
-But we didn't just build a tool. [PAUSE] We documented the fix openly for the entire developer community.
+But we didn't just build a tool. [PAUSE] We created comprehensive documentation for the entire developer community.
 
 [PAUSE]
 
-Our signature validation documentation covers [EMPHASIS] six programming languages. [/EMPHASIS] [PAUSE] Node.js, Python, Java, Ruby, Go, and PHP.
+Our signature validation guide covers [EMPHASIS] six programming languages. [/EMPHASIS] [PAUSE] Node.js, Python, Java, Ruby, Go, and PHP.
 
 [PAUSE]
 
-Every developer who runs into this problem can now find the solution. [PAUSE] That's the kind of contribution that moves the industry forward.
+Complete working implementations that developers can reference and adapt. [PAUSE] This is how we strengthen LinkedIn's developer ecosystem.
 
 ---
 
@@ -421,19 +417,19 @@ Every developer who runs into this problem can now find the solution. [PAUSE] Th
 
 **SPEAKER:**
 
-HookedIn started with a simple question: [PAUSE] Why is LinkedIn webhook integration so hard?
+HookedIn started with a simple question: [PAUSE] How can we make LinkedIn webhook integration easier?
 
 [PAUSE]
 
-The answer led us to discover a critical bug in LinkedIn's implementation. [PAUSE] One that's been causing developer frustration for years.
+As LinkedIn engineers, we have insider knowledge of how our APIs work. [PAUSE] We used that advantage to build something that helps everyone.
 
 [PAUSE]
 
-But we didn't just find the bug. [PAUSE] We built a complete solution that turns days of work into minutes.
+HookedIn provides instant testing, complete code examples, and production-ready generation. [PAUSE] Days of work become minutes.
 
 [PAUSE]
 
-HookedIn is proof that when we dig deep into hard problems, [PAUSE] we can build solutions that help thousands of developers.
+This demonstrates how we can leverage our position to accelerate our developer community. [PAUSE] And ultimately, strengthen LinkedIn's platform.
 
 [PAUSE - confident close]
 
