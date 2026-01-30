@@ -32,9 +32,9 @@ Hi, I'm [YOUR NAME], and I built HookedIn.
 
 Webhooks are powerful—they enable real-time integrations. But getting a webhook running? That's a different story.
 
-You need infrastructure deployed before you can test. Challenge validation that must work perfectly on the first try. And signature validation with precise cryptographic implementation.
+You need infrastructure deployed before you can test. Challenge validation that must work perfectly on the first try. And signature validation with precise cryptographic implementation that isn't well-documented.
 
-As a LinkedIn engineer with source code access, I saw an opportunity: what if we could share our insider knowledge and make webhook integration instant?
+The API documentation alone isn't sufficient to get this working easily. I saw an opportunity: what if we could make webhook integration instant with complete working examples?
 
 That's HookedIn.
 
@@ -122,7 +122,7 @@ And here's the best part: production-ready code generation.
 
 **[SCREEN: Show the generated Node.js code, scroll to signature validation]**
 
-Complete webhook server with correct signature validation. Notice the implementation detail here—the prefix that's added before hashing.
+Complete webhook server with correct signature validation. All the implementation details are included with clear comments explaining how it works.
 
 **[SCREEN: Show deployment instructions]**
 
@@ -137,7 +137,7 @@ Includes deployment instructions for Vercel, Railway, Render. Copy, deploy, done
 
 What normally takes six to ten hours now takes two minutes. That's a ninety-five percent reduction in developer time.
 
-As LinkedIn engineers, we can use our insider knowledge to strengthen our platform. HookedIn provides instant testing, complete documentation, and production-ready code—all to help our developer community move faster.
+HookedIn provides instant testing, complete code examples, and production-ready generation—making webhook integration accessible to everyone. When we remove friction from the developer experience, amazing integrations happen faster.
 
 Thank you. And let's get HookedIn.
 
