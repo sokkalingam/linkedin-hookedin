@@ -2,7 +2,7 @@
 ## "The Developer's Journey"
 
 **Format:** Storytelling with energy progression (excited → frustrated → hopeful)
-**Duration:** 3 minutes
+**Duration:** 3:20 (or can trim to 3:00 by shortening failure montages)
 **Catchphrase:** "Here we go..." (repeated with declining enthusiasm)
 **Tone:** Fun, relatable, entertaining
 
@@ -26,7 +26,30 @@ EXCITEMENT METER:
 
 ---
 
-### ACT 1: THE EXCITEMENT (0:00 - 0:20)
+### INTRO: THE CONTEXT (0:00 - 0:20)
+**📹 YOU ON CAMERA - Professional but conversational**
+
+---
+
+**[Confident, clear delivery]**
+
+LinkedIn is more than a social network—it's a platform. Through developer.linkedin.com, thousands of external developers build apps that integrate with LinkedIn.
+
+**[Gesture to emphasize]**
+
+They create recruiting tools, analytics dashboards, content schedulers—apps that make LinkedIn more powerful for our members.
+
+**[Pause]**
+
+And the best way to build real-time integrations? Webhooks. When a member updates their profile, shares content, or takes an action—webhooks notify these apps instantly.
+
+**[Slight smile]**
+
+So naturally, I wanted to build a webhook integration...
+
+---
+
+### ACT 1: THE EXCITEMENT (0:20 - 0:40)
 **📹 YOU ON CAMERA - Full energy, excited**
 
 ---
@@ -525,14 +548,15 @@ Between acts, use:
 
 | Time | Act | Energy | What's Happening |
 |------|-----|---------|------------------|
-| 0:00-0:20 | 1 | 🔥🔥🔥🔥🔥 | Excited discovery |
-| 0:20-0:45 | 2 | 🔥🔥🔥🔥 | First failure (challenge) |
-| 0:45-1:10 | 3 | 🔥🔥🔥 | Fix challenge, still optimistic |
-| 1:10-1:45 | 4 | 🔥🔥 | Signature nightmare |
-| 1:45-2:00 | 5 | 🔥 | Low point, defeated |
-| 2:00-2:20 | 6 | 🔥🔥 | Discover HookedIn |
-| 2:20-2:50 | 7 | 🔥🔥🔥🔥 | HookedIn works! |
-| 2:50-3:00 | 8 | 🔥🔥🔥🔥🔥 | Triumphant close |
+| 0:00-0:20 | Intro | Professional | LinkedIn platform context |
+| 0:20-0:40 | 1 | 🔥🔥🔥🔥🔥 | Excited discovery |
+| 0:40-1:05 | 2 | 🔥🔥🔥🔥 | First failure (challenge) |
+| 1:05-1:30 | 3 | 🔥🔥🔥 | Fix challenge, still optimistic |
+| 1:30-2:05 | 4 | 🔥🔥 | Signature nightmare |
+| 2:05-2:20 | 5 | 🔥 | Low point, defeated |
+| 2:20-2:40 | 6 | 🔥🔥 | Discover HookedIn |
+| 2:40-3:10 | 7 | 🔥🔥🔥🔥 | HookedIn works! |
+| 3:10-3:20 | 8 | 🔥🔥🔥🔥🔥 | Triumphant close |
 
 ---
 

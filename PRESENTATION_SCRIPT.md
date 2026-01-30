@@ -1,7 +1,7 @@
 # 🎣 HookedIn - 3-Minute Presentation Script
 
 **Format:** You on camera + screen recording inserts
-**Total Duration:** 3 minutes
+**Total Duration:** 3:20 (can trim to 3:00 if needed)
 **Pace:** Conversational, confident, clear
 
 ---
@@ -10,12 +10,13 @@
 
 | Section | Duration | Format |
 |---------|----------|--------|
-| Hook + Problem | 0:00 - 0:30 | You on camera |
-| Solution | 0:30 - 0:50 | You on camera |
-| Demo | 0:50 - 2:30 | Screen recording with your voiceover |
-| Impact + Close | 2:30 - 3:00 | You on camera |
+| Context | 0:00 - 0:20 | You on camera |
+| Hook + Problem | 0:20 - 0:50 | You on camera |
+| Solution | 0:50 - 1:10 | You on camera |
+| Demo | 1:10 - 2:50 | Screen recording with your voiceover |
+| Impact + Close | 2:50 - 3:20 | You on camera |
 
-**Total:** 3 minutes
+**Total:** 3:20 (trim demo to 1:20 for exactly 3:00)
 
 ---
 
@@ -23,7 +24,22 @@
 
 ---
 
-### PART 1: HOOK + PROBLEM (0:00 - 0:30)
+### INTRO: CONTEXT (0:00 - 0:20)
+**📹 YOU ON CAMERA - Full screen**
+
+---
+
+LinkedIn is more than a social network—it's a platform. Through developer.linkedin.com, thousands of external developers build apps that integrate with LinkedIn.
+
+They create recruiting tools, analytics dashboards, content schedulers—apps that make LinkedIn more powerful for our members.
+
+And the best way to build real-time integrations? Webhooks. When a member updates their profile or takes an action, webhooks notify these apps instantly.
+
+So naturally, I wanted to help developers build webhook integrations faster.
+
+---
+
+### PART 1: HOOK + PROBLEM (0:20 - 0:50)
 **📹 YOU ON CAMERA - Full screen**
 
 ---
